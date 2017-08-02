@@ -145,6 +145,17 @@ dimension: pkey {
     sql: ${TABLE}.category ;;
   }
 
+  dimension: is_transfer {
+    type: yesno
+    sql: ${category_raw} in
+          ('transfer',
+           'transfer for cash spending',
+          'withdrawal',
+          'cash & atm',
+          'financial','hide from budgets & trends','credit card payment')
+      ;;
+  }
+
   dimension_group: date {
 #     hidden: yes
     label: ""
@@ -165,6 +176,16 @@ dimension: pkey {
   dimension: description {
     type: string
     sql: ${TABLE}.description ;;
+    link: {
+      label: "View Merchant Transactions in Mint"
+      icon_url: "https://mint.intuit.com/favicon.ico"
+      url: "https://mint.intuit.com/transaction.event#location:%7B%22query%22%3A%22description%3A%20{{value | uri_encode }}%22%2C%22offset%22%3A0%2C%22typeFilter%22%3A%22cash%22%2C%22typeSort%22%3A8%7D"
+    }
+    link: {
+      label: "View Merchant Lookup Dashboard"
+      icon_url: "http://looker.com/favicon.ico"
+      url: "/dashboards/2?Merchant={{value | uri_encode }}"
+    }
   }
 
   dimension: labels {
@@ -178,6 +199,7 @@ dimension: pkey {
   }
 
   dimension: original_description {
+    label: "Full Transaction Code"
     type: string
     sql: ${TABLE}.original_description ;;
   }
@@ -188,14 +210,98 @@ dimension: pkey {
     sql: ${TABLE}.transaction_type ;;
   }
 
+  measure: average_amount {
+    type: average
+    sql: ${amount_signed}  ;;
+    drill_fields: [transactions*]
+    value_format_name: usd
+  }
+
+  measure: average_spend_amount {
+    type: average
+    sql: ${amount_signed} ;;
+    drill_fields: [transactions*]
+    filters: {
+      field: transaction_type
+      value: "debit"
+    }
+    value_format_name: usd
+  }
+
+  dimension: is_expensable {
+    type: yesno
+    sql:  ${labels} = 'expensable' ;;
+  }
+
   measure: count {
     type: count
 #     approximate_threshold: 100000
     drill_fields: [transactions*]
   }
 
+
+  dimension: is_before_wtd {
+    description: "Filter this on 'yes' to compare to same period in previous weeks"
+    group_label: "1) Transaction Date"
+    type: yesno
+    sql:
+      (EXTRACT(DOW FROM ${date_raw}) < EXTRACT(DOW FROM CURRENT_DATE)
+        OR
+        (
+          EXTRACT(DOW FROM ${date_raw}) = EXTRACT(DOW FROM CURRENT_DATE) AND
+          EXTRACT(HOUR FROM ${date_raw}) < EXTRACT(HOUR FROM CURRENT_DATE)
+        )
+        OR
+        (
+          EXTRACT(DOW FROM ${date_raw}) = EXTRACT(DOW FROM CURRENT_DATE) AND
+          EXTRACT(HOUR FROM ${date_raw}) <= EXTRACT(HOUR FROM CURRENT_DATE) AND
+          EXTRACT(MINUTE FROM ${date_raw}) < EXTRACT(MINUTE FROM CURRENT_DATE)
+        )
+      );;
+  }
+
+  dimension: is_before_mtd {
+    description: "Filter this on 'yes' to compare to same period in previous months"
+    group_label: "1) Transaction Date"
+    type: yesno
+    sql:
+      (EXTRACT(DAY FROM ${date_raw}) < EXTRACT(DAY FROM CURRENT_DATE)
+        OR
+        (
+          EXTRACT(DAY FROM ${date_raw}) = EXTRACT(DAY FROM CURRENT_DATE) AND
+          EXTRACT(HOUR FROM ${date_raw}) < EXTRACT(HOUR FROM CURRENT_DATE)
+        )
+        OR
+        (
+          EXTRACT(DAY FROM ${date_raw}) = EXTRACT(DAY FROM CURRENT_DATE) AND
+          EXTRACT(HOUR FROM ${date_raw}) <= EXTRACT(HOUR FROM CURRENT_DATE) AND
+          EXTRACT(MINUTE FROM ${date_raw}) < EXTRACT(MINUTE FROM CURRENT_DATE)
+        )
+      );;
+  }
+
+  dimension: is_before_ytd {
+    description: "Filter this on 'yes' to compare to same period in previous years"
+    group_label: "1) Transaction Date"
+    type: yesno
+    sql:
+      (EXTRACT(DOY FROM ${date_raw}) < EXTRACT(DOY FROM CURRENT_DATE)
+        OR
+        (
+          EXTRACT(DOY FROM ${date_raw}) = EXTRACT(DOY FROM CURRENT_DATE) AND
+          EXTRACT(HOUR FROM ${date_raw}) < EXTRACT(HOUR FROM CURRENT_DATE)
+        )
+        OR
+        (
+          EXTRACT(DOY FROM ${date_raw}) = EXTRACT(DOY FROM CURRENT_DATE) AND
+          EXTRACT(HOUR FROM ${date_raw}) <= EXTRACT(HOUR FROM CURRENT_DATE) AND
+          EXTRACT(MINUTE FROM ${date_raw}) < EXTRACT(MINUTE FROM CURRENT_DATE)
+        )
+      );;
+  }
+
   set: transactions {
-    fields: [date_date,description,transaction_type,total_amount,account_name]
+    fields: [date_date,description,transaction_type,notes,total_amount,account_name, credits, debits]
   }
 
 
