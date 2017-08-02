@@ -61,9 +61,9 @@ view: category_facts {
     type: string
     sql:
           CASE
-          WHEN ${rank_by_amount} < 10 THEN '00' || ${rank_by_amount} || ') ' || ${category}
-          WHEN ${rank_by_amount} < 100 THEN '0' || ${rank_by_amount} || ') ' || ${category}
-          ELSE                                     ${rank_by_amount} || ') ' || ${category}
+          WHEN ${rank_by_amount} < 10 THEN councat('00',${rank_by_amount},') ',${category})
+          WHEN ${rank_by_amount} < 100 THEN concat('0',${rank_by_amount},') ',${category})
+          ELSE                                     concat(${rank_by_amount},') ', ${category})
           END
     ;;
   }
@@ -92,9 +92,9 @@ view: category_facts {
     type: string
     sql:
           CASE
-          WHEN ${rank_by_number} < 10 THEN '00' || ${rank_by_number} || ') ' || ${category}
-          WHEN ${rank_by_number} < 100 THEN '0' || ${rank_by_number} || ') ' || ${category}
-          ELSE                                     ${rank_by_number} || ') ' || ${category}
+          WHEN ${rank_by_number} < 10 THEN concat('00',${rank_by_number},') ',${category})
+          WHEN ${rank_by_number} < 100 THEN concat('0',${rank_by_number},') ',${category})
+          ELSE                                     concat(${rank_by_number},') ',${category})
           END
     ;;
   }
@@ -122,9 +122,9 @@ view: category_facts {
     type: string
     sql:
           CASE
-          WHEN ${rank_by_avg} < 10 THEN '00' || ${rank_by_avg} || ') ' || ${category}
-          WHEN ${rank_by_avg} < 100 THEN '0' || ${rank_by_avg} || ') ' || ${category}
-          ELSE                                  ${rank_by_avg} || ') ' || ${category}
+          WHEN ${rank_by_avg} < 10 THEN concat('00',${rank_by_avg},') ',${category})
+          WHEN ${rank_by_avg} < 100 THEN concat('0',${rank_by_avg},') ',${category})
+          ELSE                                  concat(${rank_by_avg},') ',${category})
           END
     ;;
   }

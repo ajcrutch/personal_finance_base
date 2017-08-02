@@ -1,4 +1,4 @@
-view: mint_base_view {
+view: transactions {
 
 dimension: pkey {
   hidden: yes
@@ -145,16 +145,7 @@ dimension: pkey {
     sql: ${TABLE}.category ;;
   }
 
-  dimension: is_transfer {
-    type: yesno
-    sql: ${category_raw} in
-          ('transfer',
-           'transfer for cash spending',
-          'withdrawal',
-          'cash & atm',
-          'financial','hide from budgets & trends','credit card payment')
-      ;;
-  }
+
 
   dimension_group: date {
 #     hidden: yes
@@ -166,7 +157,12 @@ dimension: pkey {
       week,
       month,
       quarter,
-      year
+      year,
+      week_of_year,
+      month_num,
+      day_of_week,
+      day_of_week_index,
+      day_of_year
     ]
     datatype: date
     convert_tz: no
@@ -228,16 +224,30 @@ dimension: pkey {
     value_format_name: usd
   }
 
-  dimension: is_expensable {
-    type: yesno
-    sql:  ${labels} = 'expensable' ;;
-  }
-
   measure: count {
     type: count
 #     approximate_threshold: 100000
     drill_fields: [transactions*]
   }
+
+
+  dimension: is_expensable {
+    type: yesno
+    sql:  ${labels} = 'expensable' ;;
+  }
+
+  dimension: is_transfer {
+    type: yesno
+    sql: ${category_raw} in
+          ('transfer',
+           'transfer for cash spending',
+          'withdrawal',
+          'cash & atm',
+          'financial','hide from budgets & trends','credit card payment')
+      ;;
+  }
+
+
 
 
   dimension: is_before_wtd {

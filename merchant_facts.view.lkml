@@ -92,14 +92,14 @@ view: merchant_facts {
     type: number
     group_label: "Facts"
     label: "Days Since Last"
-    sql: current_date - ${last_transaction} ;;
+    sql: date_diff(current_date,${last_transaction},day) ;;
   }
 
   dimension: days_a_customer {
     type: number
     group_label: "Facts"
     label: "Days since start"
-    sql: current_date - ${first_transaction} ;;
+    sql: date_diff(current_date,${first_transaction},day) ;;
   }
 
 ####### AMOUNT #######
@@ -116,9 +116,9 @@ view: merchant_facts {
     hidden: yes
     sql:
           CASE
-          WHEN ${rank_by_amount} < 10 THEN '00' || ${rank_by_amount} || ') ' || ${merchant}
-          WHEN ${rank_by_amount} < 100 THEN '0' || ${rank_by_amount} || ') ' || ${merchant}
-          ELSE                                     ${rank_by_amount} || ') ' || ${merchant}
+          WHEN ${rank_by_amount} < 10 THEN concat('00',${rank_by_amount},') ',${merchant})
+          WHEN ${rank_by_amount} < 100 THEN concat('0',${rank_by_amount},') ',${merchant})
+          ELSE                                     concat(${rank_by_amount},') ',${merchant})
           END
     ;;
 
@@ -157,9 +157,9 @@ view: merchant_facts {
       type: string
       sql:
           CASE
-          WHEN ${rank_by_number} < 10 THEN '00' || ${rank_by_number} || ') ' || ${merchant}
-          WHEN ${rank_by_number} < 100 THEN '0' || ${rank_by_number} || ') ' || ${merchant}
-          ELSE                                     ${rank_by_number} || ') ' || ${merchant}
+          WHEN ${rank_by_number} < 10 THEN concat('00',${rank_by_number},') ',${merchant})
+          WHEN ${rank_by_number} < 100 THEN concat('0',${rank_by_number},') ',${merchant})
+          ELSE                                     concat(${rank_by_number},') ',${merchant})
           END
     ;;
     }
@@ -196,9 +196,9 @@ view: merchant_facts {
       type: string
       sql:
           CASE
-          WHEN ${rank_by_avg} < 10 THEN '00' || ${rank_by_avg} || ') ' || ${merchant}
-          WHEN ${rank_by_avg} < 100 THEN '0' || ${rank_by_avg} || ') ' || ${merchant}
-          ELSE                                  ${rank_by_avg} || ') ' || ${merchant}
+          WHEN ${rank_by_avg} < 10 THEN concat('00',${rank_by_avg},') ',${merchant})
+          WHEN ${rank_by_avg} < 100 THEN concat('0',${rank_by_avg},') ',${merchant})
+          ELSE                                  concat(${rank_by_avg},') ',${merchant})
           END
     ;;
     }

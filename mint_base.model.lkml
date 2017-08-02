@@ -4,26 +4,27 @@ include: "*.view.lkml"         # include all views in this project
 # include: "calendar.view.lkml"
 explore: mint_base_explore {
   extension: required
-  from: mint_base_view
+  from: transactions
   view_name: mint_data
+  view_label: "Transactions"
   description: "Filtered to normal expenses by default"
   always_filter: {
     filters: {
-      field: mint_data.obfuscate
+      field: transactions.obfuscate
       value: "yes"
       }
-      filters: {
-        field: transactions.is_transfer
-        value: "No"
-      }
-      filters: {
-        field: transactions.is_expensable
-        value: "No"
-      }
-      filters: {
-        field: transactions.transaction_type
-        value: "debit"
-      }
+#       filters: {
+#         field: transactions.is_transfer
+#         value: "No"
+#       }
+#       filters: {
+#         field: transactions.is_expensable
+#         value: "No"
+#       }
+#       filters: {
+#         field: transactions.transaction_type
+#         value: "debit"
+#       }
 
     }
   join: merchant_facts {
