@@ -56,14 +56,20 @@ view: category_facts {
   dimension: rank_by_amount {
     type: number
     sql: ${TABLE}.rank_by_amount ;;
+    }
+
+  dimension: rank_by_amount_string {
+    type:  string
+    sql: cast(${rank_by_amount} as string) ;;
   }
+
   dimension: category_by_amount {
     type: string
     sql:
           CASE
-          WHEN ${rank_by_amount} < 10 THEN councat('00',${rank_by_amount},') ',${category})
-          WHEN ${rank_by_amount} < 100 THEN concat('0',${rank_by_amount},') ',${category})
-          ELSE                                     concat(${rank_by_amount},') ', ${category})
+          WHEN ${rank_by_amount} < 10 THEN concat('00',${rank_by_amount_string},') ',${category})
+          WHEN ${rank_by_amount} < 100 THEN concat('0',${rank_by_amount_string},') ',${category})
+          ELSE                                     concat(${rank_by_amount_string},') ', ${category})
           END
     ;;
   }
@@ -88,13 +94,20 @@ view: category_facts {
     type: number
     sql: ${TABLE}.rank_by_number ;;
   }
+
+    dimension: rank_by_number_string {
+      type:  string
+      hidden: yes
+      sql: cast(${rank_by_number} as string) ;;
+    }
+
   dimension: category_by_number {
     type: string
     sql:
           CASE
-          WHEN ${rank_by_number} < 10 THEN concat('00',${rank_by_number},') ',${category})
-          WHEN ${rank_by_number} < 100 THEN concat('0',${rank_by_number},') ',${category})
-          ELSE                                     concat(${rank_by_number},') ',${category})
+          WHEN ${rank_by_number} < 10 THEN concat('00',${rank_by_number_string},') ',${category})
+          WHEN ${rank_by_number} < 100 THEN concat('0',${rank_by_number_string},') ',${category})
+          ELSE                                     concat(${rank_by_number_string},') ',${category})
           END
     ;;
   }
@@ -128,6 +141,7 @@ view: category_facts {
           END
     ;;
   }
+
   dimension: category_by_avg_tail {
     type: string
     sql:
@@ -143,4 +157,5 @@ view: category_facts {
     value_format_name: usd
   }
 ####### AVG #######
+
 }
