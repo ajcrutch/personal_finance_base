@@ -3,41 +3,41 @@ view: merchant_facts {
   derived_table: {
     sql:
       SELECT
-         T.description
-        ,SUM(T.amount)                                              AS total_amount
+         transactions.description
+        ,SUM(transactions.amount)                                              AS total_amount
         ,COUNT(DISTINCT concat(cast(date as string),cast(amount as string),account_name,original_description))
                                                                      AS volume
-        ,AVG(T.amount)                                              AS avg_amount
-        ,MAX(T.amount)                                              AS max_amount
+        ,AVG(transactions.amount)                                              AS avg_amount
+        ,MAX(transactions.amount)                                              AS max_amount
         ,COUNT(DISTINCT concat(cast(date as string),cast(amount as string),account_name,original_description)
-            )*1.0/NULLIF(date_diff(MAX(T.date),MIN(T.date),day),0)              AS frequency
-        ,MIN(T.date)                                                AS first_transaction
-        ,MAX(T.date)                                                AS last_transaction
-        ,date_diff(MAX(T.date),MIN(T.date),day)                                  AS duration
-        ,ROW_NUMBER() OVER (ORDER BY SUM(T.amount) DESC)            AS rank_by_amount
+            )*1.0/NULLIF(date_diff(MAX(transactions.date),MIN(transactions.date),day),0)              AS frequency
+        ,MIN(transactions.date)                                                AS first_transaction
+        ,MAX(transactions.date)                                                AS last_transaction
+        ,date_diff(MAX(transactions.date),MIN(transactions.date),day)                                  AS duration
+        ,ROW_NUMBER() OVER (ORDER BY SUM(transactions.amount) DESC)            AS rank_by_amount
         ,ROW_NUMBER() OVER (ORDER BY COUNT(DISTINCT concat(cast(date as string),cast(amount as string),account_name,original_description)
             ) DESC)                                               AS rank_by_number
-        ,ROW_NUMBER() OVER (ORDER BY AVG(T.amount) DESC)            AS rank_by_avg
+        ,ROW_NUMBER() OVER (ORDER BY AVG(transactions.amount) DESC)            AS rank_by_avg
       FROM
-        mint_andy T
+        mint_andy transactions
       WHERE
         1=1
-        AND {% condition transactions.transaction_type %}   T.transaction_type     {% endcondition %}
-        AND {% condition transactions.category %}           T.category             {% endcondition %}
-        AND {% condition transactions.notes %}              T.notes                {% endcondition %}
-        AND {% condition transactions.labels %}             T.labels               {% endcondition %}
-        AND {% condition transactions.description %}        T.description          {% endcondition %}
-        AND {% condition transactions.account_name %}       T.account_name         {% endcondition %}
-        AND {% condition transactions.date_date %}          T.date                 {% endcondition %}
-        AND {% condition transactions.date_month %}         T.date                 {% endcondition %}
-        AND {% condition transactions.date_quarter %}       T.date                 {% endcondition %}
-        AND {% condition transactions.date_year %}          T.date                 {% endcondition %}
-        AND {% condition transactions.date_week %}          T.date                 {% endcondition %}
-        AND {% condition transactions.date_week_of_year %}  T.date                 {% endcondition %}
-        AND {% condition transactions.date_month_num %}     T.date                 {% endcondition %}
-        AND {% condition transactions.date_day_of_year %}   T.date                 {% endcondition %}
-        AND {% condition transactions.date_day_of_week %}   T.date                 {% endcondition %}
-        AND {% condition transactions.date_day_of_week_index %} T.date             {% endcondition %}
+        AND {% condition transactions.transaction_type %}   transactions.transaction_type     {% endcondition %}
+        AND {% condition transactions.category %}           transactions.category             {% endcondition %}
+        AND {% condition transactions.notes %}              transactions.notes                {% endcondition %}
+        AND {% condition transactions.labels %}             transactions.labels               {% endcondition %}
+        AND {% condition transactions.description %}        transactions.description          {% endcondition %}
+        AND {% condition transactions.account_name %}       transactions.account_name         {% endcondition %}
+        AND {% condition transactions.date_date %}          transactions.date                 {% endcondition %}
+        AND {% condition transactions.date_month %}         transactions.date                 {% endcondition %}
+        AND {% condition transactions.date_quarter %}       transactions.date                 {% endcondition %}
+        AND {% condition transactions.date_year %}          transactions.date                 {% endcondition %}
+        AND {% condition transactions.date_week %}          transactions.date                 {% endcondition %}
+        AND {% condition transactions.date_week_of_year %}  transactions.date                 {% endcondition %}
+        AND {% condition transactions.date_month_num %}     transactions.date                 {% endcondition %}
+        AND {% condition transactions.date_day_of_year %}   transactions.date                 {% endcondition %}
+        AND {% condition transactions.date_day_of_week %}   transactions.date                 {% endcondition %}
+        AND {% condition transactions.date_day_of_week_index %} transactions.date             {% endcondition %}
         AND {% condition transactions.is_transfer %}        1=1                      {% endcondition %}
         AND {% condition transactions.is_expensable %}      1=1                      {% endcondition %}
       GROUP BY

@@ -5,7 +5,7 @@ include: "*.view.lkml"         # include all views in this project
 explore: mint_base_explore {
   extension: required
   from: transactions
-  view_name: mint_data
+  view_name: transactions
   view_label: "Transactions"
   description: "Filtered to normal expenses by default"
   always_filter: {

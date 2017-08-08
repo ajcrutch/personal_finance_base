@@ -164,9 +164,9 @@ dimension: pkey {
       day_of_week_index,
       day_of_year
     ]
-    datatype: date
+    datatype: timestamp
     convert_tz: no
-    sql: ${TABLE}.date ;;
+    sql: cast (${TABLE}.date as timestamp);;
   }
 
   dimension: description {
