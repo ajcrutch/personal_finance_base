@@ -1,6 +1,8 @@
 view: merchant_facts {
   label: "Merchant"
+
   derived_table: {
+    datagroup_trigger: manual_load
     sql:
       SELECT
          transactions.description

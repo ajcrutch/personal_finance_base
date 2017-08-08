@@ -1,6 +1,7 @@
 view: category_facts {
   label: "Category"
   derived_table: {
+    datagroup_trigger: manual_load
     sql:
       SELECT
          transactions.category                                               AS t_category

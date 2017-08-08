@@ -3,6 +3,7 @@ connection: "personal_bq"
 include: "*.view.lkml"         # include all views in this project
 # include: "calendar.view.lkml"
 explore: mint_base_explore {
+  persist_with: manual_load
   extension: required
   from: transactions
   view_name: transactions
