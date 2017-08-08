@@ -44,7 +44,7 @@ dimension: pkey {
               else null end ;;
   }
 
-  measure: credits {
+  measure: total_income_amount{
     value_format_name:  usd
     type: sum
     sql: ${amount_unsigned_raw} *${obfuscate_amount} ;;
@@ -54,7 +54,7 @@ dimension: pkey {
     }
   }
 
-  measure: debits {
+  measure: total_spend_amount {
     value_format_name:  usd
     type: sum
     sql: ${amount_unsigned_raw} *${obfuscate_amount} ;;
@@ -164,9 +164,9 @@ dimension: pkey {
       day_of_week_index,
       day_of_year
     ]
-    datatype: timestamp
+    datatype: date
     convert_tz: no
-    sql: cast (${TABLE}.date as timestamp);;
+    sql: ${TABLE}.date ;;
   }
 
   dimension: description {
@@ -258,14 +258,14 @@ dimension: pkey {
       (EXTRACT(DOW FROM ${date_raw}) < EXTRACT(DOW FROM CURRENT_DATE)
         OR
         (
-          EXTRACT(DOW FROM ${date_raw}) = EXTRACT(DOW FROM CURRENT_DATE) AND
-          EXTRACT(HOUR FROM ${date_raw}) < EXTRACT(HOUR FROM CURRENT_DATE)
+          EXTRACT(DOW FROM ${date_raw}) = EXTRACT(DOW FROM CURRENT_DATE) /*AND
+          EXTRACT(HOUR FROM ${date_raw}) < EXTRACT(HOUR FROM CURRENT_DATE)*/
         )
         OR
         (
-          EXTRACT(DOW FROM ${date_raw}) = EXTRACT(DOW FROM CURRENT_DATE) AND
+          EXTRACT(DOW FROM ${date_raw}) = EXTRACT(DOW FROM CURRENT_DATE) /*AND
           EXTRACT(HOUR FROM ${date_raw}) <= EXTRACT(HOUR FROM CURRENT_DATE) AND
-          EXTRACT(MINUTE FROM ${date_raw}) < EXTRACT(MINUTE FROM CURRENT_DATE)
+          EXTRACT(MINUTE FROM ${date_raw}) < EXTRACT(MINUTE FROM CURRENT_DATE)*/
         )
       );;
   }
@@ -278,14 +278,14 @@ dimension: pkey {
       (EXTRACT(DAY FROM ${date_raw}) < EXTRACT(DAY FROM CURRENT_DATE)
         OR
         (
-          EXTRACT(DAY FROM ${date_raw}) = EXTRACT(DAY FROM CURRENT_DATE) AND
-          EXTRACT(HOUR FROM ${date_raw}) < EXTRACT(HOUR FROM CURRENT_DATE)
+          EXTRACT(DAY FROM ${date_raw}) = EXTRACT(DAY FROM CURRENT_DATE) /*AND
+          EXTRACT(HOUR FROM ${date_raw}) < EXTRACT(HOUR FROM CURRENT_DATE)*/
         )
         OR
         (
-          EXTRACT(DAY FROM ${date_raw}) = EXTRACT(DAY FROM CURRENT_DATE) AND
+          EXTRACT(DAY FROM ${date_raw}) = EXTRACT(DAY FROM CURRENT_DATE) /*AND
           EXTRACT(HOUR FROM ${date_raw}) <= EXTRACT(HOUR FROM CURRENT_DATE) AND
-          EXTRACT(MINUTE FROM ${date_raw}) < EXTRACT(MINUTE FROM CURRENT_DATE)
+          EXTRACT(MINUTE FROM ${date_raw}) < EXTRACT(MINUTE FROM CURRENT_DATE)*/
         )
       );;
   }
@@ -298,20 +298,20 @@ dimension: pkey {
       (EXTRACT(DOY FROM ${date_raw}) < EXTRACT(DOY FROM CURRENT_DATE)
         OR
         (
-          EXTRACT(DOY FROM ${date_raw}) = EXTRACT(DOY FROM CURRENT_DATE) AND
-          EXTRACT(HOUR FROM ${date_raw}) < EXTRACT(HOUR FROM CURRENT_DATE)
+          EXTRACT(DOY FROM ${date_raw}) = EXTRACT(DOY FROM CURRENT_DATE) /*AND
+          EXTRACT(HOUR FROM ${date_raw}) < EXTRACT(HOUR FROM CURRENT_DATE)*/
         )
         OR
         (
-          EXTRACT(DOY FROM ${date_raw}) = EXTRACT(DOY FROM CURRENT_DATE) AND
+          EXTRACT(DOY FROM ${date_raw}) = EXTRACT(DOY FROM CURRENT_DATE) /*AND
           EXTRACT(HOUR FROM ${date_raw}) <= EXTRACT(HOUR FROM CURRENT_DATE) AND
-          EXTRACT(MINUTE FROM ${date_raw}) < EXTRACT(MINUTE FROM CURRENT_DATE)
+          EXTRACT(MINUTE FROM ${date_raw}) < EXTRACT(MINUTE FROM CURRENT_DATE)*/
         )
       );;
   }
 
   set: transactions {
-    fields: [date_date,description,transaction_type,notes,total_amount,account_name, credits, debits]
+    fields: [date_date,description,transaction_type,notes,total_amount,account_name, total_income_amount, total_spend_amount]
   }
 
 
