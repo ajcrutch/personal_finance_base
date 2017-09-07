@@ -52,6 +52,7 @@ dimension: pkey {
       field: transaction_type
       value: "credit"
     }
+    drill_fields: [summary*]
   }
 
   measure: total_spend_amount {
@@ -62,7 +63,33 @@ dimension: pkey {
       field: transaction_type
       value: "debit"
     }
+    drill_fields: [summary*]
   }
+
+  measure: total_income_amount_drill{
+    hidden: yes
+    value_format_name:  usd
+    type: sum
+    sql: ${amount_unsigned_raw} *${obfuscate_amount} ;;
+    filters: {
+      field: transaction_type
+      value: "credit"
+    }
+    drill_fields: [transactions*]
+  }
+
+  measure: total_spend_amount_drill {
+    hidden: yes
+    value_format_name:  usd
+    type: sum
+    sql: ${amount_unsigned_raw} *${obfuscate_amount} ;;
+    filters: {
+      field: transaction_type
+      value: "debit"
+    }
+    drill_fields: [transactions*]
+  }
+
 
   dimension: amount_tier {
     type:  tier
@@ -99,8 +126,15 @@ dimension: pkey {
   }
 
   measure: count_of_days {
+    hidden: yes
     type: number
     sql: date_diff({% date_end date_date %},{% date_start date_date %},day);;
+  }
+
+  measure: count_of_months {
+    hidden: yes
+    type: number
+    sql: date_diff({% date_end date_date %},{% date_start date_date %},month);;
   }
 
   measure: count_of_days_not_work {
@@ -206,14 +240,15 @@ dimension: pkey {
     sql: ${TABLE}.transaction_type ;;
   }
 
-  measure: average_amount {
+  measure: average_transaction_amount {
     type: average
     sql: ${amount_signed}  ;;
     drill_fields: [transactions*]
     value_format_name: usd
   }
 
-  measure: average_spend_amount {
+  measure: average_transaction_spend_amount {
+    hidden: yes
     type: average
     sql: ${amount_signed} ;;
     drill_fields: [transactions*]
@@ -223,6 +258,22 @@ dimension: pkey {
     }
     value_format_name: usd
   }
+
+  measure: average_monthly_spend_amount {
+    type: number
+    sql: ${total_spend_amount}/ ${count_of_months};;
+    drill_fields: [transactions*]
+    value_format_name: usd
+  }
+
+  measure: average_monthly_amount {
+    description: "Intended for use with a pivot on credit/debit"
+    type: number
+    sql: ${total_amount}/ ${count_of_months};;
+    drill_fields: [transactions*]
+    value_format_name: usd
+  }
+
 
   measure: count {
     type: count
@@ -311,7 +362,10 @@ dimension: pkey {
   }
 
   set: transactions {
-    fields: [date_date,description,transaction_type,notes,total_amount,account_name, total_income_amount, total_spend_amount]
+    fields: [date_date,description,transaction_type,original_description,total_amount,account_name, total_income_amount, total_spend_amount]
+  }
+  set: summary {
+    fields: [account_name,total_income_amount_drill,total_spend_amount_drill]
   }
 
 
