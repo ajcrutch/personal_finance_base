@@ -1,4 +1,4 @@
-include: "*.view.lkml"         # include all views in this project
+# include: "*.view.lkml"         # include all views in this project #not necessary, is extension: required, this can be done in final project
 # include: "calendar.view.lkml"
 explore: mint_base_explore {
   persist_with: manual_load
